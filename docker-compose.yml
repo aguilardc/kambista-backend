@@ -1,0 +1,35 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: kambista_api
+    ports:
+      - "${PORT:-3000}:${PORT:-3000}"
+    env_file:
+      - .env
+    depends_on:
+      - mongodb
+    networks:
+      - kambista_network
+    volumes:
+      - .:/app
+      - /app/node_modules
+
+  mongodb:
+    image: mongo:6.0
+    container_name: kambista_db
+    restart: always
+    ports:
+      - "27017:27017"
+    env_file:
+      - .env
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - kambista_network
+networks:
+  kambista_network:
+    driver: bridge
+volumes:
+  mongodb_data:

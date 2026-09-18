@@ -20,6 +20,9 @@ export class DomainExceptionFilter implements ExceptionFilter {
       InvalidEmailException: HttpStatus.BAD_REQUEST,
       InvalidPasswordException: HttpStatus.BAD_REQUEST,
       InvalidRoleException: HttpStatus.BAD_REQUEST,
+      IdenticalCurrenciesException: HttpStatus.BAD_REQUEST,
+      InvalidAmountException: HttpStatus.BAD_REQUEST,
+      InvalidCurrencyException: HttpStatus.BAD_REQUEST,
     };
 
     const statusCode = domainExceptionsMapping[exception.name];

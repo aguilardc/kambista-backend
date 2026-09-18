@@ -3,7 +3,7 @@ import { InvalidPasswordException } from '../exceptions/invalid-password.excepti
 export class Password {
   private readonly value: string;
   constructor(value: string, isHashed: boolean = false) {
-    if (isHashed && !this.isValid(value)) {
+    if (!isHashed && !this.isValid(value)) {
       throw new InvalidPasswordException();
     }
     this.value = value;

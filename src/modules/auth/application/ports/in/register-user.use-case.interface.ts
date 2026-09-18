@@ -1,3 +1,5 @@
+export const REGISTER_USER_USE_CASE = Symbol('REGISTER_USER_USE_CASE');
+
 export interface RegisterUserCommand {
   email: string;
   passwordStr: string;

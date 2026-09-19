@@ -22,12 +22,16 @@ import { GetTransactionHistoryUseCaseService } from './application/use-cases/get
 
 // Adaptadores Out (Infraestructura)
 import { MongoTransactionRepository } from './infrastructure/adapters/out/mongo-transaction.repository.service';
-import { ApiExchangeRateProvider } from './infrastructure/adapters/out/api-exchange-rate.provider.service';
 import { AuthModule } from '@src/modules/auth/auth.module';
+import { CurrencyModule } from '../currency/currency.module';
+import {
+  DbExchangeRateProvider
+} from '@src/modules/transaction/infrastructure/adapters/out/db-exchange-rate.provider.service';
 
 @Module({
   imports: [
     AuthModule,
+    CurrencyModule,
     MongooseModule.forFeature([
       { name: TransactionModel.name, schema: TransactionSchema },
     ]),
@@ -41,7 +45,7 @@ import { AuthModule } from '@src/modules/auth/auth.module';
     },
     {
       provide: EXCHANGE_RATE_PROVIDER,
-      useClass: ApiExchangeRateProvider,
+      useClass: DbExchangeRateProvider,
     },
     // Vinculación de Puertos de Entrada
     {

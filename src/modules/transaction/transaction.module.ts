@@ -23,9 +23,11 @@ import { GetTransactionHistoryUseCaseService } from './application/use-cases/get
 // Adaptadores Out (Infraestructura)
 import { MongoTransactionRepository } from './infrastructure/adapters/out/mongo-transaction.repository.service';
 import { ApiExchangeRateProvider } from './infrastructure/adapters/out/api-exchange-rate.provider.service';
+import { AuthModule } from '@src/modules/auth/auth.module';
 
 @Module({
   imports: [
+    AuthModule,
     MongooseModule.forFeature([
       { name: TransactionModel.name, schema: TransactionSchema },
     ]),

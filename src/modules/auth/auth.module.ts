@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { JwtModule } from '@nestjs/jwt';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 // Controlador (Adaptador In)
 import { AuthController } from './infrastructure/adapters/in/auth.controller';
@@ -27,11 +28,20 @@ import { MongoUserRepository } from './infrastructure/adapters/out/mongo-user.re
 import { BcryptPasswordHasherAdapter } from './infrastructure/adapters/out/bcrypt-password-hasher.adapter.service';
 import { JwtTokenGeneratorAdapter } from './infrastructure/adapters/out/jwt-token-generator.adapter.service';
 
+import { JwtStrategy } from './infrastructure/guards/jwt.strategy';
+import { PassportModule } from '@nestjs/passport';
+
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
-    JwtModule.register({
-      secret: process.env.JWT_SECRET || 'kambista-secreto-dev',
+    PassportModule.register({ defaultStrategy: 'jwt' }),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        secret:
+          configService.get<string>('JWT_SECRET') || 'kambista-secreto-dev',
+      }),
     }),
   ],
   controllers: [AuthController],
@@ -56,6 +66,8 @@ import { JwtTokenGeneratorAdapter } from './infrastructure/adapters/out/jwt-toke
       provide: LOGIN_USE_CASE,
       useClass: LoginUseCaseService,
     },
+    JwtStrategy,
   ],
+  exports: [JwtModule, PassportModule],
 })
 export class AuthModule {}

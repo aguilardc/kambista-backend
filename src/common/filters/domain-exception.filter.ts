@@ -3,6 +3,7 @@ import {
   Catch,
   ArgumentsHost,
   HttpStatus,
+  HttpException,
 } from '@nestjs/common';
 import { Response } from 'express';
 
@@ -12,7 +13,13 @@ export class DomainExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 
+    if (exception instanceof HttpException) {
+      const status = exception.getStatus();
+      return response.status(status).json(exception.getResponse());
+    }
+
     const domainExceptionsMapping: Record<string, HttpStatus> = {
+      // Módulo Auth
       InvalidCredentialsException: HttpStatus.UNAUTHORIZED,
       UserAlreadyExistsException: HttpStatus.CONFLICT,
       UserNotFoundException: HttpStatus.NOT_FOUND,
@@ -20,9 +27,11 @@ export class DomainExceptionFilter implements ExceptionFilter {
       InvalidEmailException: HttpStatus.BAD_REQUEST,
       InvalidPasswordException: HttpStatus.BAD_REQUEST,
       InvalidRoleException: HttpStatus.BAD_REQUEST,
-      IdenticalCurrenciesException: HttpStatus.BAD_REQUEST,
+
+      // Módulo Transacciones
       InvalidAmountException: HttpStatus.BAD_REQUEST,
       InvalidCurrencyException: HttpStatus.BAD_REQUEST,
+      IdenticalCurrenciesException: HttpStatus.BAD_REQUEST,
     };
 
     const statusCode = domainExceptionsMapping[exception.name];

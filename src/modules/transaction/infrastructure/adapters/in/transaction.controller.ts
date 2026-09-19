@@ -1,4 +1,12 @@
-import { Controller, Post, Get, Body, Request, Inject } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Get,
+  Body,
+  Request,
+  Inject,
+  UseGuards,
+} from '@nestjs/common';
 import {
   CREATE_TRANSACTION_USE_CASE,
   ICreateTransactionUseCase,
@@ -8,8 +16,11 @@ import {
   IGetTransactionHistoryUseCase,
 } from '../../../application/ports/in/get-transaction-history.use-case';
 import { CreateTransactionDto } from './dtos/create-transaction.dto';
+import { JwtAuthGuard } from '../../../../auth/infrastructure/guards/jwt-auth.guard';
+
 
 @Controller('transactions')
+@UseGuards(JwtAuthGuard)
 export class TransactionController {
   constructor(
     @Inject(CREATE_TRANSACTION_USE_CASE)

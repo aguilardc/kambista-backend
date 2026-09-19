@@ -5,6 +5,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './modules/auth/auth.module.js';
 import { MongooseModule } from '@nestjs/mongoose';
 import { TransactionModule } from './modules/transaction/transaction.module';
+import { CurrencyModule } from './modules/currency/currency.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { TransactionModule } from './modules/transaction/transaction.module';
     }),
     AuthModule,
     TransactionModule,
+    CurrencyModule,
   ],
   controllers: [AppController],
   providers: [AppService],

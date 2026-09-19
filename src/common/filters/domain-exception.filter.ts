@@ -32,6 +32,9 @@ export class DomainExceptionFilter implements ExceptionFilter {
       InvalidAmountException: HttpStatus.BAD_REQUEST,
       InvalidCurrencyException: HttpStatus.BAD_REQUEST,
       IdenticalCurrenciesException: HttpStatus.BAD_REQUEST,
+
+      // Módulo Currency
+      InvalidRateException: HttpStatus.BAD_REQUEST,
     };
 
     const statusCode = domainExceptionsMapping[exception.name];

@@ -6,6 +6,8 @@ import {
   Request,
   Inject,
   UseGuards,
+  Query,
+  Req,
 } from '@nestjs/common';
 import {
   CREATE_TRANSACTION_USE_CASE,
@@ -17,14 +19,15 @@ import {
 } from '../../../application/ports/in/get-transaction-history.use-case';
 import { CreateTransactionDto } from './dtos/create-transaction.dto';
 import { JwtAuthGuard } from '../../../../auth/infrastructure/guards/jwt-auth.guard';
-
+import { GetHistoryDto } from '@src/modules/transaction/infrastructure/adapters/in/dtos/get-history.dto';
+import { TransactionResponseMapper } from '@src/modules/transaction/infrastructure/adapters/in/mappers/transaction-response.mapper';
 
 @Controller('transactions')
 @UseGuards(JwtAuthGuard)
 export class TransactionController {
   constructor(
     @Inject(CREATE_TRANSACTION_USE_CASE)
-    private readonly createUseCase: ICreateTransactionUseCase,
+    private readonly createTransactionUseCase: ICreateTransactionUseCase,
     @Inject(GET_TRANSACTION_HISTORY_USE_CASE)
     private readonly getHistoryUseCase: IGetTransactionHistoryUseCase,
   ) {}
@@ -33,17 +36,35 @@ export class TransactionController {
   async create(@Request() req: any, @Body() dto: CreateTransactionDto) {
     const userId = req.user?.sub || 'usuario-temporal-id';
 
-    return this.createUseCase.execute({
+    const transaction = await this.createTransactionUseCase.execute({
       userId,
-      sourceCurrency: dto.sourceCurrency,
-      targetCurrency: dto.targetCurrency,
-      amount: dto.amount,
+      monedaOrigen: dto.monedaOrigen,
+      monedaDestino: dto.monedaDestino,
+      monto: dto.monto,
     });
+
+    return {
+      id: transaction.getId,
+      monedaOrigen: transaction.getSourceCurrency,
+      monedaDestino: transaction.getTargetCurrency,
+      monto: transaction.getOriginalAmount,
+      montoCambiado: transaction.getFinalAmount,
+      tipoCambio: transaction.getExchangeRateApplied,
+      fecha: transaction.getCreatedAt,
+    };
   }
 
   @Get('history')
-  async getHistory(@Request() req: any) {
-    const userId = req.user?.sub || 'usuario-temporal-id';
-    return this.getHistoryUseCase.execute(userId);
+  async getHistory(@Req() req: any, @Query() query: GetHistoryDto) {
+    const transactions = await this.getHistoryUseCase.execute(
+      req.user,
+      query.startDate,
+      query.endDate,
+      query.userId,
+    );
+
+    console.log(typeof transactions);
+
+    return transactions.map((tx: any) => TransactionResponseMapper.toDto(tx));
   }
 }

@@ -33,9 +33,9 @@ export class CreateTransactionUseCaseService implements ICreateTransactionUseCas
   ) {}
 
   async execute(command: CreateTransactionCommand): Promise<any> {
-    const sourceCurrency = new Currency(command.sourceCurrency);
-    const targetCurrency = new Currency(command.targetCurrency);
-    const originalAmount = new TransactionAmount(command.amount);
+    const sourceCurrency = new Currency(command.monedaOrigen);
+    const targetCurrency = new Currency(command.monedaDestino);
+    const originalAmount = new TransactionAmount(command.monto);
 
     const rates = await this.exchangeRateProvider.getRates();
 
@@ -66,16 +66,6 @@ export class CreateTransactionUseCaseService implements ICreateTransactionUseCas
     );
 
     await this.transactionRepository.save(transaction);
-
-    return {
-      id: transaction.getId,
-      userId: transaction.getUserId,
-      sourceCurrency: transaction.getSourceCurrency,
-      targetCurrency: transaction.getTargetCurrency,
-      originalAmount: transaction.getOriginalAmount,
-      exchangeRateApplied: transaction.getExchangeRateApplied,
-      finalAmount: transaction.getFinalAmount,
-      createdAt: transaction.getCreatedAt,
-    };
+    return transaction;
   }
 }

@@ -3,5 +3,10 @@ export const GET_TRANSACTION_HISTORY_USE_CASE = Symbol(
 );
 
 export interface IGetTransactionHistoryUseCase {
-  execute(userId: string): Promise<any[]>;
+  execute(
+    currentUser: any,
+    startDate: string,
+    endDate: string,
+    requestedUserId?: string,
+  ): Promise<any[]>;
 }

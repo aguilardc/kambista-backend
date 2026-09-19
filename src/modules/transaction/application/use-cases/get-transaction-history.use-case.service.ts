@@ -12,17 +12,27 @@ export class GetTransactionHistoryUseCaseService implements IGetTransactionHisto
     private readonly transactionRepository: ITransactionRepository,
   ) {}
 
-  async execute(userId: string): Promise<any[]> {
-    const transactions = await this.transactionRepository.findByUserId(userId);
+  async execute(
+    currentUser: any,
+    startDate: string,
+    endDate: string,
+    requestedUserId?: string,
+  ): Promise<any[]> {
+    let targetUserId: string;
+    targetUserId = currentUser.sub;
+    if (currentUser.role === 'admin' && requestedUserId) {
+      targetUserId = requestedUserId;
+    }
 
-    return transactions.map((tx) => ({
-      id: tx.getId,
-      sourceCurrency: tx.getSourceCurrency,
-      targetCurrency: tx.getTargetCurrency,
-      originalAmount: tx.getOriginalAmount,
-      exchangeRateApplied: tx.getExchangeRateApplied,
-      finalAmount: tx.getFinalAmount,
-      createdAt: tx.getCreatedAt,
-    }));
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    end.setUTCHours(23, 59, 59, 999);
+
+    return await this.transactionRepository.findByUserAndDateRange(
+      targetUserId,
+      start,
+      end,
+    );
   }
 }

@@ -4,5 +4,9 @@ export const TRANSACTION_REPOSITORY = Symbol('TRANSACTION_REPOSITORY');
 
 export interface ITransactionRepository {
   save(transaction: Transaction): Promise<void>;
-  findByUserId(userId: string): Promise<Transaction[]>;
+  findByUserAndDateRange(
+    userId: string,
+    startDate: Date,
+    endDate: Date,
+  ): Promise<Transaction[]>;
 }

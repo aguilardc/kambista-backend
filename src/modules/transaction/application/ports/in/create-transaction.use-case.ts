@@ -4,9 +4,9 @@ export const CREATE_TRANSACTION_USE_CASE = Symbol(
 
 export interface CreateTransactionCommand {
   userId: string;
-  sourceCurrency: string;
-  targetCurrency: string;
-  amount: number;
+  monedaOrigen: string;
+  monedaDestino: string;
+  monto: number;
 }
 
 export interface ICreateTransactionUseCase {

@@ -40,6 +40,6 @@ import { ExchangeRateCron } from './infrastructure/adapters/in/cron/exchange-rat
     },
     ExchangeRateCron,
   ],
-  exports: [EXCHANGE_RATE_REPOSITORY],
+  exports: [EXCHANGE_RATE_REPOSITORY, MongooseModule],
 })
 export class CurrencyModule {}
